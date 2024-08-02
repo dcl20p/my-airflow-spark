@@ -1,0 +1,20 @@
+FROM apache/airflow:2.9.3-python3.8
+USER root
+
+# Cài đặt OpenJDK-11 và Ant
+RUN apt-get update &&
+    apt-get install -y openjdk-11-jdk ant &&
+    apt-get clean &&
+    rm -rf /var/lib/apt/lists/*
+
+# Thiết lập JAVA_HOME
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+RUN export JAVA_HOME
+
+USER airflow
+
+# Cài đặt các gói Python cần thiết từ requirements.txt
+COPY ./requirements.txt /
+RUN pip install -r /requirements.txt
+
+# COPY --chown=airflow:root ./dags /opt/airflow/dags
