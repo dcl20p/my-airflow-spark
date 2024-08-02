@@ -16,7 +16,7 @@ USER root
 
 # Cài đặt Spark
 ENV SPARK_HOME=/opt/spark
-ENV JAVA_HOME=/home/jdk-11.0.2
+# ENV JAVA_HOME=/home/jdk-11.0.2
 
 RUN apt-get update && \
     apt-get install -y wget unzip less procps && \
@@ -25,14 +25,34 @@ RUN apt-get update && \
     ln -s /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} ${SPARK_HOME} && \
     rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 
-RUN DOWNLOAD_URL="https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" \
-    && TMP_DIR="$(mktemp -d)" \
-    && curl -fL "${DOWNLOAD_URL}" --output "${TMP_DIR}/openjdk-11.0.2_linux-x64_bin.tar.gz" \
-    && mkdir -p "${JAVA_HOME}" \
-    && tar xzf "${TMP_DIR}/openjdk-11.0.2_linux-x64_bin.tar.gz" -C "${JAVA_HOME}" --strip-components=1 \
-    && rm -rf "${TMP_DIR}" \
-    && java --version
+# RUN DOWNLOAD_URL="https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" \
+#     && TMP_DIR="$(mktemp -d)" \
+#     && curl -fL "${DOWNLOAD_URL}" --output "${TMP_DIR}/openjdk-11.0.2_linux-x64_bin.tar.gz" \
+#     && mkdir -p "${JAVA_HOME}" \
+#     && tar xzf "${TMP_DIR}/openjdk-11.0.2_linux-x64_bin.tar.gz" -C "${JAVA_HOME}" --strip-components=1 \
+#     && rm -rf "${TMP_DIR}" \
+#     && java --version
 
+# RUN apt-get update && \
+#     apt-get install -y wget apt-transport-https ca-certificates gnupg2 && \
+#     wget https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz && \
+#     tar xvf openjdk-11.0.2_linux-x64_bin.tar.gz -C /opt && \
+#     echo "deb https://apt.corretto.aws stable main" | tee /etc/apt/sources.list.d/corretto.list && \
+#     apt-get update && \
+#     java -version && \
+#     javac -version
+
+# Install OpenJDK-8
+RUN apt-get update && \
+    apt-get install -y wget apt-transport-https ca-certificates gnupg2 && \
+    wget -O- https://apt.corretto.aws/corretto.key | apt-key add - && \
+    echo "deb https://apt.corretto.aws stable main" | tee /etc/apt/sources.list.d/corretto.list && \
+    apt-get update && \
+    apt-get install -y java-1.8.0-amazon-corretto-jdk && \
+    java -version && \
+    javac -version
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-amazon-corretto
 RUN export SPARK_HOME
 RUN export JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${SPARK_HOME}/bin:${PATH}"
