@@ -8,7 +8,7 @@
 TRY_LOOP="5"
 
 # Global defaults and back-compat
-: "${AIRFLOW_HOME:="/usr/local/airflow"}"
+: "${AIRFLOW_HOME:="/opt/airflow"}"
 : "${AIRFLOW__CORE__FERNET_KEY:=${FERNET_KEY:="OdhUJwT1C6483WhS2oWu0QWT7nozUUwpUWvPxDY74rc="}}"
 : "${AIRFLOW__CORE__EXECUTOR:=${EXECUTOR:-Sequential}Executor}"
 
@@ -31,15 +31,15 @@ export \
 wait_for_port() {
   local name="$1" host="$2" port="$3"
   local j=0
-  # while ! nc -z "$host" "$port" >/dev/null 2>&1 < /dev/null; do
-  #   j=$((j+1))
-  #   if [ $j -ge $TRY_LOOP ]; then
-  #     echo >&2 "$(date) - $host:$port still not reachable, giving up"
-  #     exit 1
-  #   fi
-  #   echo "$(date) - waiting for $name... $j/$TRY_LOOP"
-  #   sleep 5
-  # done
+  while ! nc -z "$host" "$port" >/dev/null 2>&1 < /dev/null; do
+    j=$((j+1))
+    if [ $j -ge $TRY_LOOP ]; then
+      echo >&2 "$(date) - $host:$port still not reachable, giving up"
+      exit 1
+    fi
+    echo "$(date) - waiting for $name... $j/$TRY_LOOP"
+    sleep 5
+  done
 }
 
 # Other executors than SequentialExecutor drive the need for an SQL database, here PostgreSQL is used
@@ -112,12 +112,18 @@ case "$1" in
   webserver)
     airflow db init
     airflow users create \
-      --username "${AIRFLOW_USERNAME:-admin}" \
-      --firstname "${AIRFLOW_FIRSTNAME:-Admin}" \
-      --lastname "${AIRFLOW_LASTNAME:-User}" \
-      --role Admin \
-      --email "${AIRFLOW_EMAIL:-tungtest@gmail.com}" \
-      --password "${AIRFLOW_PASSWORD:-abc123456}"
+      --username "${AIRFLOW_USERNAME:="admin"}" \
+      --firstname "${AIRFLOW_FIRSTNAME:="Admin"}" \
+      --lastname "${AIRFLOW_LASTNAME:="User"}" \
+      --role "${AIRFLOW_USERROLE:="Admin"}" \
+      --email "${AIRFLOW_EMAIL:="tungtest@gmail.com"}" \
+      --password "${AIRFLOW_PASSWORD:="abc123456"}"
+
+    airflow connections add ${AIRFLOW_CONNECTION_ID:="my_spark_connection"} \
+      --conn-type "${AIRFLOW_CONNECTION_TYPE:="spark"}" \
+      --conn-host "${AIRFLOW_CONNECTION_HOST:="spark://spark"}" \
+      --conn-port ${AIRFLOW_CONNECTION_PORT:="7077"} \
+      --conn-extra "{'queue': ${AIRFLOW_CONNECTION_QUEUE:="root.default"}, 'deploy_mode': ${AIRFLOW_CONNECTION_DEPLOY_MODE:="client"}, 'spark_binary': ${AIRFLOW_SPARK_BINARY:="spark-submit"}}"
 
     # airflow dags list
     if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ] || [ "$AIRFLOW__CORE__EXECUTOR" = "SequentialExecutor" ]; then

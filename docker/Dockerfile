@@ -1,10 +1,12 @@
 # Dockerfile for Airflow with Spark
-FROM apache/airflow:2.9.3-python3.8
+FROM python:3.12
 
-
+ARG AIRFLOW_VERSION=2.9.3
 ARG AIRFLOW_HOME=/opt/airflow
 ARG SPARK_VERSION="3.5.1"
 ARG HADOOP_VERSION="3"
+ARG AIRFLOW_DEPS=""
+ARG PYTHON_DEPS=""
 
 # Define en_US.
 ENV LANGUAGE en_US.UTF-8
@@ -14,9 +16,51 @@ ENV LC_MESSAGES en_US.UTF-8
 
 USER root
 
+RUN set -ex \
+    && buildDeps=' \
+        freetds-dev \
+        libkrb5-dev \
+        libsasl2-dev \
+        libssl-dev \
+        libffi-dev \
+        libpq-dev \
+        git \
+    ' \
+    && apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        $buildDeps \
+        freetds-bin \
+        build-essential \
+        default-libmysqlclient-dev \
+        apt-utils \
+        curl \
+        rsync \
+        locales \
+        iputils-ping \
+        telnet \
+        netcat-openbsd \
+    && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
+    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
+    && pip install --upgrade pip \
+    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \    
+    && apt-get purge --auto-remove -yqq $buildDeps \
+    && apt-get autoremove -yqq --purge \
+    && apt-get clean \
+    && rm -rf \
+        /var/lib/apt/lists/* \
+        /tmp/* \
+        /var/tmp/* \
+        /usr/share/man \
+        /usr/share/doc \
+        /usr/share/doc-base \
+        && python --version \
+        && pip freeze
+
 # Cài đặt Spark
 ENV SPARK_HOME=/opt/spark
-# ENV JAVA_HOME=/home/jdk-11.0.2
 
 RUN apt-get update && \
     apt-get install -y wget unzip less procps && \
@@ -25,24 +69,7 @@ RUN apt-get update && \
     ln -s /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} ${SPARK_HOME} && \
     rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 
-# RUN DOWNLOAD_URL="https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" \
-#     && TMP_DIR="$(mktemp -d)" \
-#     && curl -fL "${DOWNLOAD_URL}" --output "${TMP_DIR}/openjdk-11.0.2_linux-x64_bin.tar.gz" \
-#     && mkdir -p "${JAVA_HOME}" \
-#     && tar xzf "${TMP_DIR}/openjdk-11.0.2_linux-x64_bin.tar.gz" -C "${JAVA_HOME}" --strip-components=1 \
-#     && rm -rf "${TMP_DIR}" \
-#     && java --version
-
-# RUN apt-get update && \
-#     apt-get install -y wget apt-transport-https ca-certificates gnupg2 && \
-#     wget https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz && \
-#     tar xvf openjdk-11.0.2_linux-x64_bin.tar.gz -C /opt && \
-#     echo "deb https://apt.corretto.aws stable main" | tee /etc/apt/sources.list.d/corretto.list && \
-#     apt-get update && \
-#     java -version && \
-#     javac -version
-
-# Install OpenJDK-8
+# Cài đặt OpenJDK-11
 RUN apt-get update && \
     apt-get install -y wget apt-transport-https ca-certificates gnupg2 && \
     wget -O- https://apt.corretto.aws/corretto.key | apt-key add - && \
@@ -52,7 +79,7 @@ RUN apt-get update && \
     java -version && \
     javac -version
 
-ENV JAVA_HOME /usr/lib/jvm/java-8-amazon-corretto
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-amazon-corretto
 RUN export SPARK_HOME
 RUN export JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${SPARK_HOME}/bin:${PATH}"
