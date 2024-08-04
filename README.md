@@ -87,12 +87,16 @@ Postgres - Database airflow:
      ![](./doc/pgadmin_login.png "Pgadmin Login")
 
 2. Register server:
-     ![](./doc/pgadmin_register_server.png "Register server")
-     ![](./doc/connect_db_postgres1.png "Login database airflow tab General")
-     ![](./doc/connect_db_postgres2.png "Login database airflow tab Connection")
+
+   ![](./doc/pgadmin_register_server.png "Register server")
+
+   ![](./doc/connect_db_postgres1.png "Login database airflow tab General")
+
+   ![](./doc/connect_db_postgres2.png "Login database airflow tab Connection")
    
 4. Check data table movies and ratings (not set):
-     ![](./doc/pgadmin_data_not_set.png "Check data")
+
+   ![](./doc/pgadmin_data_not_set.png "Check data")
 
 ## How to run a DAG to test
 
@@ -102,18 +106,25 @@ Postgres - Database airflow:
      ![](./doc/airflow_login.png "Airflow Login")
     
 2. Connect with the ID 'my_spark_connection' configured in the 'Connections' tab on the menu bar "Admin":
-     ![](./doc/airflow_connections_menu.png "Airflow Connections")
-     ![](./doc/airflow_my_connect.png "My spark connection")
 
-3. Run the spark-test DAG
-     ![](./doc/airflow_run_trigger_dag.png "Run trigger dag")
+   ![](./doc/airflow_connections_menu.png "Airflow Connections")
 
-5. Check the DAG log for the task spark_job. You will see the result printed in the log
-     ![](./doc/airflow_dag_log.png "Run trigger dag")
+   ![](./doc/airflow_my_connect.png "My spark connection")
 
-6. Check the spark application in the Spark Master web UI (http://localhost:8181)
-     ![](./doc/spark_master_app.png "Spark Master UI")
-7. Check data table movies and ratings (has been successfully set):
+4. Run the spark-test DAG
+
+   ![](./doc/airflow_run_trigger_dag.png "Run trigger dag")
+
+6. Check the DAG log for the task spark_job. You will see the result printed in the log
+
+   ![](./doc/airflow_dag_log.png "Run trigger dag")
+
+8. Check the spark application in the Spark Master web UI (http://localhost:8181)
+
+   ![](./doc/spark_master_app.png "Spark Master UI")
+   
+10. Check data table movies and ratings (has been successfully set):
+
    ![](./doc/pgadmin_data_set.png "Data has been set")
 
 ## How to run the Spark Apps via spark-submit
