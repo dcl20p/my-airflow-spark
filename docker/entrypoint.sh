@@ -119,11 +119,11 @@ case "$1" in
       --email "${AIRFLOW_EMAIL:="tungtest@gmail.com"}" \
       --password "${AIRFLOW_PASSWORD:="abc123456"}"
 
-    airflow connections add ${AIRFLOW_CONNECTION_ID:="my_spark_connection"} \
-      --conn-type "${AIRFLOW_CONNECTION_TYPE:="spark"}" \
-      --conn-host "${AIRFLOW_CONNECTION_HOST:="spark://spark"}" \
-      --conn-port ${AIRFLOW_CONNECTION_PORT:="7077"} \
-      --conn-extra "{'queue': ${AIRFLOW_CONNECTION_QUEUE:="root.default"}, 'deploy_mode': ${AIRFLOW_CONNECTION_DEPLOY_MODE:="client"}, 'spark_binary': ${AIRFLOW_SPARK_BINARY:="spark-submit"}}"
+    airflow connections add "${AIRFLOW_CONNECTION_ID:-my_spark_connection}" \
+    --conn-type "${AIRFLOW_CONNECTION_TYPE:-spark}" \
+    --conn-host "${AIRFLOW_CONNECTION_HOST:-spark}" \
+    --conn-port "${AIRFLOW_CONNECTION_PORT:-7077}" \
+    --conn-extra "{\"queue\": \"${AIRFLOW_CONNECTION_QUEUE:-root.default}\", \"deploy_mode\": \"${AIRFLOW_CONNECTION_DEPLOY_MODE:-client}\", \"spark_binary\": \"${AIRFLOW_SPARK_BINARY:-spark-submit\"}"
 
     # airflow dags list
     if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ] || [ "$AIRFLOW__CORE__EXECUTOR" = "SequentialExecutor" ]; then
