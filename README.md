@@ -69,9 +69,9 @@ Note: when running the docker-compose for the first time, the images `postgres:l
 
 ### Check if you can access
 
-Airflow: http://localhost:8080
+Airflow: [http://localhost:8080](http://localhost:8080)
 
-Spark Master: http://localhost:8181
+Spark Master: [http://localhost:8181](http://localhost:8181)
 
 Postgres - Database airflow:
 
@@ -81,7 +81,7 @@ Postgres - Database airflow:
 * Password: airflow
 
 ## How to login pgadmin
-1. Accessing pagadim web UI http://localhost:5050 and log in with the following account:
+1. Accessing pagadim web UI [http://localhost:5050](http://localhost:5050) and log in with the following account:
     * Username: tungtest@gmail.com
     * Password: abc123456
      ![](./doc/pgadmin_login.png "Pgadmin Login")
@@ -94,13 +94,13 @@ Postgres - Database airflow:
 
    ![](./doc/connect_db_postgres2.png "Login database airflow tab Connection")
    
-4. Check data table movies and ratings (not set):
+3. Check data table movies and ratings (Before data is added):
 
    ![](./doc/pgadmin_data_not_set.png "Check data")
 
 ## How to run a DAG to test
 
-1. Accessing airflow web UI http://localhost:8080 and log in with the following account:
+1. Accessing airflow web UI [http://localhost:8080](http://localhost:8080) and log in with the following account:
     * Username: admin
     * Password: abc123456
      ![](./doc/airflow_login.png "Airflow Login")
@@ -111,19 +111,19 @@ Postgres - Database airflow:
 
    ![](./doc/airflow_my_connect.png "My spark connection")
 
-4. Run the spark-test DAG
+3. Run the spark-test DAG
 
    ![](./doc/airflow_run_trigger_dag.png "Run trigger dag")
 
-6. Check the DAG log for the task spark_job. You will see the result printed in the log
+4. Check the DAG log for the task spark_job. You will see the result printed in the log
 
    ![](./doc/airflow_dag_log.png "Run trigger dag")
 
-8. Check the spark application in the Spark Master web UI (http://localhost:8181)
+5. Check the spark application in the Spark Master web UI ([http://localhost:8080](http://localhost:8080))
 
    ![](./doc/spark_master_app.png "Spark Master UI")
    
-10. Check data table movies and ratings (has been successfully set):
+6. Check data table movies and ratings (After data has been added):
 
    ![](./doc/pgadmin_data_set.png "Data has been set")
 
