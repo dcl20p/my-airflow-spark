@@ -115,7 +115,7 @@ Postgres - Database airflow:
 
    ![](./doc/airflow_my_connect.png "My spark connection")
 
-3. Run the spark-test DAG
+3. Run the spark-postgres DAG
 
    ![](./doc/airflow_run_trigger_dag.png "Run trigger dag")
 
