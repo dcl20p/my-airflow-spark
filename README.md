@@ -119,7 +119,7 @@ Postgres - Database airflow:
 
    ![](./doc/airflow_run_trigger_dag.png "Run trigger dag")
 
-4. Check the DAG log for the task spark_job. You will see the result printed in the log
+4. Check the DAG log for the task spark job. You will see the result printed in the log
 
    ![](./doc/airflow_dag_log.png "Run trigger dag")
 
