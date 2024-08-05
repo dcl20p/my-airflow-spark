@@ -38,9 +38,13 @@ This project contains the following containers:
 
 Inside the my-airflow-spark/docker
   * Auto build with SH file, using Git Bash:
+    ```
     $ ./build.sh
+    ```
   * Manual build:
+    ```
     $ docker build --rm --force-rm -t docker-airflow-spark:2.9.3_3.5.1 .
+    ```
 
 Optionally, you can override the arguments in the build to choose specific Spark, Hadoop and Airflow versions. As an example, here is how to build an image containing Airflow version `1.10.14`, Spark version `2.4.7` and Hadoop version `2.7`.
 
