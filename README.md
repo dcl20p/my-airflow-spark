@@ -46,7 +46,7 @@ Inside the my-airflow-spark/docker
     $ docker build --rm --force-rm -t docker-airflow-spark:2.9.3_3.5.1 .
     ```
 
-Optionally, you can override the arguments in the build to choose specific Spark, Hadoop and Airflow versions. As an example, here is how to build an image containing Airflow version `1.10.14`, Spark version `2.4.7` and Hadoop version `2.7`.
+Optionally, you can override the arguments in the build to choose specific Spark, Hadoop and Airflow versions. As an example, here is how to build an image containing Airflow version `2.9.3`, Spark version `3.5.1` and Hadoop version `3`.
 
     $ docker build --rm --force-rm \
     -t docker-airflow-spark:2.9.3_3.5.1 . \
